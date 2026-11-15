@@ -1,0 +1,17 @@
+# puzzles.txt - one puzzle per line, 81 characters each
+# digits 1-9 are clues, 0 or . is an empty cell
+# lines starting with # and blank lines are ignored
+#
+# read this file with:  python sudoku.py puzzles.txt
+
+# a normal newspaper puzzle
+530070000600195000098000060800060003400803001700020006060000280000419005000080079
+
+# called one of the hardest puzzles, still solves in milliseconds
+800000000003600000070090200050007000000045700000100030001000068008500010090000400
+
+# completely empty grid, this one has many answers
+.................................................................................
+
+# broken puzzle, digit 1 is twice in the first row, this line is skipped
+110000000000000000000000000000000000000000000000000000000000000000000000000000000
