@@ -37,7 +37,37 @@ python src/sudoku.py data/puzzles.txt # solve every puzzle inside that file
 python tests/test_sudoku.py           # run the self checks
 ```
 
-You need Python 3 only. Nothing to install.
+You need Python 3 and the `duckdb` package. If DuckDB is missing:
+
+```
+pip install duckdb
+```
+
+## The database
+
+All saved work lives in one file: `data/sudock.duckdb` (DuckDB).
+
+Every table has `created_at` and `updated_at`, so you can see when a row was
+made and when it last changed.
+
+| Table | What it holds |
+|---|---|
+| `puzzles` | one row per puzzle: the 81 characters, the solution, clue count, where it came from |
+| `games` | one row per time you play a puzzle: status, mistakes, time taken, start and finish |
+| `moves` | one row per digit you put on the board, with the row, column and value |
+| `settings` | small key/value pairs, for example the chosen theme |
+
+Commands:
+
+```
+python src/db.py --init       # create the file and tables
+python src/db.py --tables     # list the table names
+python src/db.py --show       # show columns and a few rows
+python src/export_to_js.py    # also saves its puzzles into the database
+```
+
+`export_to_js.py` skips a puzzle that is already stored, so you can run it again
+without making duplicates.
 
 ## Running in the browser
 

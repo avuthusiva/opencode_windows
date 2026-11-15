@@ -19,6 +19,7 @@ import json
 import os
 import time
 
+import db as database
 import sudoku
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -70,6 +71,23 @@ def generated_item(clues, name):
     return item
 
 
+def save_to_database(items):
+    """Store every puzzle in data/sudock.duckdb, skipping ones already there."""
+    con = database.init_db()
+    added = 0
+    already = 0
+    for item in items:
+        known = database.find_puzzle(con, item["puzzle"]) is not None
+        database.save_puzzle(con, item["puzzle"], item.get("solution"),
+                             item["source"])
+        if known:
+            already += 1
+        else:
+            added += 1
+    con.close()
+    return added, already
+
+
 def main():
     items = []
 
@@ -111,6 +129,10 @@ def main():
         handle.write("\n".join(lines))
 
     print("Wrote %d puzzles to %s" % (len(items), OUTPUT))
+
+    added, already = save_to_database(items)
+    print("Database: %d new puzzles added, %d already present in %s"
+          % (added, already, database.DB_PATH))
     return 0
 
 
