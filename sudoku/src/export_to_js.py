@@ -1,16 +1,16 @@
 """
-export_to_js.py - run the Python sudoku logic and save the result for the page
+export_to_js.py - run the Python sudoku logic and save the result
 
 Why this file exists:
     A page in a browser can only run JavaScript, it cannot call Python.
-    So this small script does the Python work once, writes everything into
-    a plain file called puzzles.js, and sudoku.html reads that file and
-    shows it on the page.
+    This script does the Python work once and writes the result into
+    data/puzzles.js. The web page no longer loads that file (the puzzle
+    list was removed); it is kept as a sample of the Python output.
 
 Run it again any time you want fresh puzzles:
-    python export_to_js.py
+    python src/export_to_js.py
 
-What it writes into puzzles.js:
+What it writes into data/puzzles.js:
     window.PYTHON_PUZZLES = [ {name, source, clues, puzzle, solution,
                                answers, solve_ms}, ... ]
 """
@@ -22,7 +22,9 @@ import time
 import sudoku
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUTPUT = os.path.join(HERE, "puzzles.js")
+ROOT = os.path.dirname(HERE)
+DATA = os.path.join(ROOT, "data")
+OUTPUT = os.path.join(DATA, "puzzles.js")
 
 
 def describe(grid):
@@ -72,7 +74,7 @@ def main():
     items = []
 
     # 1. the puzzles from puzzles.txt, solved by Python
-    path = os.path.join(HERE, "puzzles.txt")
+    path = os.path.join(DATA, "puzzles.txt")
     if os.path.exists(path):
         for line_number, text, grid in sudoku.read_puzzles(path):
             item = solve_item(text, "Puzzle from the text file",

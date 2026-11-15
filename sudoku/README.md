@@ -1,19 +1,24 @@
 # Sudoku in Python - learning notes
 
-This folder has the logic only, no screen or web page. The point is to see how
+This folder has the logic and a small web page. The point is to see how
 a small set of rules becomes a working program.
 
 ## What is in the folder
 
-| File | What it holds |
-|---|---|
-| `sudoku.py` | All the logic: reading a puzzle, rule check, solver, answer counter, puzzle generator, command line |
-| `test_sudoku.py` | 20 small checks, so you can see the code really works |
-| `puzzles.txt` | Sample puzzles in a simple text format |
-| `export_to_js.py` | Runs `sudoku.py` and writes the results into `puzzles.js` for the web page |
-| `puzzles.js` | Written by `export_to_js.py`, do not edit by hand |
-| `sudoku.html` | The browser page: the same logic in JavaScript, plus the puzzles Python made |
-| `README.md` | These notes |
+```
+sudoku/
+├── README.md          these notes
+├── src/               the Python code
+│   ├── sudoku.py      all the logic, rule check, solver, generator, command line
+│   └── export_to_js.py  runs sudoku.py and writes data/puzzles.js
+├── tests/
+│   └── test_sudoku.py 20 small checks, so you can see the code really works
+├── data/
+│   ├── puzzles.txt    sample puzzles in a simple text format
+│   └── puzzles.js     written by export_to_js.py, do not edit by hand
+└── web/
+    └── sudoku.html    the browser page, same logic in JavaScript
+```
 
 ## How to run
 
@@ -26,17 +31,17 @@ cd C:\Users\asvr4\Desktop\work\opencode\sudoku
 Then:
 
 ```
-python sudoku.py                  # generate one puzzle, then solve it
-python sudoku.py --clues 28       # same, but ask for 28 clues
-python sudoku.py puzzles.txt      # solve every puzzle inside that file
-python test_sudoku.py             # run the self checks
+python src/sudoku.py                  # generate one puzzle, then solve it
+python src/sudoku.py --clues 28       # same, but ask for 28 clues
+python src/sudoku.py data/puzzles.txt # solve every puzzle inside that file
+python tests/test_sudoku.py           # run the self checks
 ```
 
 You need Python 3 only. Nothing to install.
 
 ## Running in the browser
 
-Double click `sudoku.html`, or right click it and open it with Chrome. That is
+Double click `web\sudoku.html`, or right click it and open it with Chrome. That is
 all, the page needs no server and no internet.
 
 On the page you can:
@@ -50,17 +55,13 @@ On the page you can:
   forced cell
 * press **Show solution** to fill the whole board
 
-The second half of the page lists puzzles that the Python code made. They are
-read from `puzzles.js`, which is a normal script file, because a browser page
-cannot call Python directly. To refresh that list:
+The page is self contained. The old puzzle list was removed, so the page no
+longer reads `data/puzzles.js`. That file is still written by the Python code
+and kept only as a sample of what Python produced:
 
 ```
-python export_to_js.py
+python src/export_to_js.py
 ```
-
-Then reload the page. Each entry also shows how many milliseconds Python needed
-to solve or make that puzzle, so you can compare Python and JavaScript on the
-same work.
 
 The JavaScript functions have the same names and the same jobs as the Python
 ones: `parseGrid`, `candidates`, `findBestEmpty`, `solve`, `countSolutions`,
@@ -201,7 +202,7 @@ most common bug.
 2. Rate difficulty by the number of guesses the solver needed, then print
    easy / medium / hard for each puzzle in a file.
 3. Save generated puzzles to a file with `grid_to_text()`, and read them back
-   with `python sudoku.py thatfile.txt`.
+   with `python src/sudoku.py thatfile.txt`.
 4. Add a `hint` function: return one cell that currently has only one option.
 5. Change `generate_puzzle()` so it keeps trying until it reaches the exact
    clue count you asked for, and see how slow 22 clues becomes.

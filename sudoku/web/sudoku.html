@@ -3,17 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sudoku - the Python logic running in the browser</title>
+<title>Sudoku</title>
 <style>
   :root {
+    --ink: #e8eef6;
+    --line: #8b9bb4;
+    --thin: #33405a;
+    --given: #f4f8fd;
+    --user: #5aa9ff;
+    --bad: #ff7b72;
+    --ok: #56d364;
+    --paper: #0d1117;
+    --panel: #161d29;
+    --panel-edge: #2a3547;
+    --muted: #9fb0c6;
+    --accent-1: #5aa9ff;
+    --accent-2: #a78bfa;
+    --accent-3: #56d364;
+    --glow-1: rgba(90, 169, 255, 0.18);
+    --glow-2: rgba(167, 139, 250, 0.16);
+    --btn-bg: #1f2937;
+    --btn-border: #33405a;
+    --btn-hover: #273449;
+    --text-soft: #c3d0e2;
+    --grid-bg: #101826;
+    --frame: #3d8ef0;
+    --frame-glow: rgba(90, 169, 255, 0.16);
+    --panel-shadow: rgba(0, 0, 0, 0.35);
+    --shadow: rgba(0, 0, 0, 0.45);
+    --cell-sel: #1d3557;
+    --cell-same: #16304d;
+    --cell-wrong: #4a1f22;
+    --tip-bg-1: rgba(90, 169, 255, 0.12);
+    --tip-bg-2: rgba(167, 139, 250, 0.12);
+    --tip-edge: rgba(90, 169, 255, 0.30);
+  }
+
+  /* Light theme: same layout, swapped palette. */
+  body.light {
     --ink: #12212e;
     --line: #2f3a45;
     --thin: #b8c2cc;
     --given: #12212e;
     --user: #1a56db;
-    --bad: #d93025;
+    --bad: #c62828;
     --ok: #1e7a3c;
     --paper: #f4f6f8;
+    --panel: #ffffff;
+    --panel-edge: #d7dee5;
+    --muted: #4a5a68;
+    --accent-1: #1a56db;
+    --accent-2: #6d28d9;
+    --accent-3: #1e7a3c;
+    --glow-1: rgba(26, 86, 219, 0.10);
+    --glow-2: rgba(109, 40, 217, 0.08);
+    --btn-bg: #ffffff;
+    --btn-border: #c3ccd6;
+    --btn-hover: #eef3f9;
+    --text-soft: #33414f;
+    --grid-bg: #ffffff;
+    --frame: #1a56db;
+    --frame-glow: rgba(26, 86, 219, 0.14);
+    --panel-shadow: rgba(15, 23, 42, 0.10);
+    --shadow: rgba(15, 23, 42, 0.14);
+    --cell-sel: #c7ddff;
+    --cell-same: #eef4ff;
+    --cell-wrong: #fde8e6;
+    --tip-bg-1: rgba(26, 86, 219, 0.07);
+    --tip-bg-2: rgba(109, 40, 217, 0.07);
+    --tip-edge: rgba(26, 86, 219, 0.25);
   }
   * { box-sizing: border-box; }
   body {
@@ -21,50 +79,93 @@
     padding: 24px 16px 60px;
     font-family: "Segoe UI", Tahoma, Arial, sans-serif;
     color: var(--ink);
-    background: var(--paper);
+    background:
+      radial-gradient(1000px 520px at 15% -10%, var(--glow-1), transparent 60%),
+      radial-gradient(900px 480px at 95% 0%, var(--glow-2), transparent 55%),
+      var(--paper);
+    min-height: 100vh;
   }
-  header { max-width: 900px; margin: 0 auto 16px; }
-  h1 { font-size: 22px; margin: 0 0 6px; }
+  header { max-width: 900px; margin: 0 auto 16px; text-align: center; }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 6px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
   p.lead { margin: 0; color: #4a5a68; font-size: 14px; }
   main { max-width: 900px; margin: 0 auto; display: grid; gap: 18px; }
   .panel {
-    background: #fff;
-    border: 1px solid #d7dee5;
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
     border-radius: 10px;
     padding: 14px 16px;
+    box-shadow: 0 10px 30px var(--panel-shadow);
   }
-  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
   button {
     font: inherit;
     font-size: 14px;
     padding: 8px 12px;
-    border: 1px solid #c3ccd6;
+    border: 1px solid var(--btn-border);
     border-radius: 8px;
-    background: #fff;
+    background: var(--btn-bg);
+    color: var(--ink);
     cursor: pointer;
   }
-  button:hover { background: #eef3f9; }
-  button.primary { background: var(--user); border-color: var(--user); color: #fff; }
-  button.primary:hover { background: #1447b8; }
-  label { font-size: 14px; color: #4a5a68; }
-  select { font: inherit; font-size: 14px; padding: 7px 8px; border-radius: 8px; border: 1px solid #c3ccd6; background: #fff; }
+  button:hover { background: var(--btn-hover); border-color: var(--accent-1); }
+  button.primary { background: linear-gradient(180deg, #2a6fd4, #1f57ad); border-color: #2a6fd4; color: #fff; }
+  button.primary:hover { background: linear-gradient(180deg, #2f7fe0, #2a6fd4); }
+
+  .theme-toggle {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 10;
+    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--ink);
+    box-shadow: 0 6px 18px var(--shadow);
+  }
+  .theme-toggle:hover { background: var(--btn-hover); border-color: var(--accent-1); }
+  label { font-size: 14px; color: var(--muted); }
+  select { font: inherit; font-size: 14px; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--btn-border); background: var(--btn-bg); color: var(--ink); }
 
   .board-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
   .numbers { display: flex; flex-direction: column; align-items: stretch; width: min(100%, 470px); gap: 8px; }
   .keypad { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; width: 100%; }
   .key-btn { font-size: clamp(15px, 3.4vw, 21px); padding: 10px 0; font-weight: 600; }
   .erase { align-self: center; min-width: 170px; }
-  .tip { font-size: 14px; color: #4a5a68; margin: 4px 0 0; line-height: 1.55; text-align: center; }
-  .status-line { margin-top: 16px; }
+  .tip {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin: 4px 0 0;
+    line-height: 1.55;
+    text-align: center;
+    background: linear-gradient(135deg, var(--tip-bg-1), var(--tip-bg-2));
+    border: 1px solid var(--tip-edge);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .tip strong { color: var(--accent-1); }
+  .tip strong:nth-of-type(2) { color: var(--accent-2); }
+  .status-line { margin-top: 16px; text-align: center; }
   .board {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     width: min(100%, 470px);
     aspect-ratio: 1 / 1;
-    border: 3px solid var(--line);
-    border-radius: 4px;
+    border: 3px solid var(--frame);
+    border-radius: 6px;
     overflow: hidden;
-    background: #fff;
+    background: var(--grid-bg);
+    box-shadow: 0 0 0 3px var(--frame-glow), 0 14px 34px var(--shadow);
     container-type: inline-size;
   }
   @supports (font-size: 1cqw) {
@@ -85,18 +186,18 @@
   .cell.box-right { border-right: 2px solid var(--line); }
   .cell.box-bottom { border-bottom: 2px solid var(--line); }
   .cell.given { color: var(--given); }
-  .cell.selected { background: #dbeafe; }
-  .cell.wrong { background: #fde8e6; color: var(--bad); }
+  .cell.selected { background: var(--cell-sel); }
+  .cell.wrong { background: var(--cell-wrong); color: var(--bad); }
   .cell.filled-ok { color: var(--ok); }
-  .cell.same { background: #eef4ff; }
-  .cell.selected { background: #c7ddff; }
+  .cell.same { background: var(--cell-same); }
+  .cell.selected { background: var(--cell-sel); outline: 1px solid var(--accent-1); outline-offset: -2px; }
   .board.need-select { animation: nudge 0.45s ease 2; outline: 3px solid transparent; outline-offset: 4px; }
   @keyframes nudge {
     0%, 100% { outline-color: transparent; }
     50% { outline-color: var(--bad); }
   }
 
-  #status { font-size: 14px; min-height: 20px; color: #33414f; }
+  #status { font-size: 14px; min-height: 20px; color: var(--text-soft); }
   #status.good { color: var(--ok); }
   #status.bad { color: var(--bad); }
 
@@ -122,12 +223,13 @@
     word-break: break-all;
   }
   details summary { cursor: pointer; font-size: 14px; font-weight: 600; }
-  details p, details li { font-size: 14px; color: #33414f; }
+  details p, details li { font-size: 14px; color: var(--text-soft); }
 
   /* Narrow windows, small laptops and side panels: keep everything readable
      and never let the board or the number pad run off the screen. */
   @media (max-width: 620px) {
     body { padding: 14px 10px 40px; font-size: 15px; }
+    .theme-toggle { position: static; display: block; margin: 0 0 10px auto; }
     header, main { max-width: 100%; }
     h1 { font-size: 19px; }
     p.lead { font-size: 14px; }
@@ -147,12 +249,10 @@
 </head>
 <body>
 
+<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">☀ Light mode</button>
+
 <header>
-  <h1>Sudoku - the Python logic, running in the browser</h1>
-  <p class="lead">
-    Same rules and same search as <code>sudoku.py</code>, written in JavaScript so the page
-    can run it. Nothing is sent anywhere, everything happens in this tab.
-  </p>
+  <h1>Sudoku</h1>
 </header>
 
 <main>
@@ -189,44 +289,7 @@
     <div id="status" class="status-line">Click an empty cell, then click a number.</div>
   </section>
 
-  <section class="panel">
-    <h2>Puzzles made by the Python code</h2>
-    <p class="help">
-      These came from <code>sudoku.py</code> and were written into <code>puzzles.js</code> by
-      <code>export_to_js.py</code>. If this list is empty, run
-      <code>python export_to_js.py</code> once and reload the page.
-    </p>
-    <div id="python-list"></div>
-  </section>
-
-  <section class="panel">
-    <details>
-      <summary>How this page works</summary>
-      <p>
-        Every function below has the same name and the same job as in <code>sudoku.py</code>:
-        <code>parseGrid</code>, <code>candidates</code>, <code>findBestEmpty</code>,
-        <code>solve</code>, <code>countSolutions</code>, <code>generatePuzzle</code>.
-      </p>
-      <ul>
-        <li>A grid is a list of 9 rows, and each row is a list of 9 numbers. 0 means empty.</li>
-        <li><code>candidates</code> collects the digits used in the row, the column and the box,
-            then returns the digits 1 to 9 that are left.</li>
-        <li><code>solve</code> guesses a digit in the cell with the fewest options, calls itself
-            for the rest of the grid, and takes the guess back when the rest fails.</li>
-        <li><code>generatePuzzle</code> fills an empty grid, then blanks cells one by one and keeps
-            a blank only when the puzzle still has exactly one answer.</li>
-      </ul>
-      <p>
-        A browser cannot call Python, so the Python results are copied into
-        <code>puzzles.js</code> as plain text. That file is a normal script, the page just reads it.
-      </p>
-    </details>
-  </section>
-
 </main>
-
-<!-- Optional: the puzzles written by export_to_js.py. -->
-<script src="puzzles.js"></script>
 
 <script>
 "use strict";
@@ -456,7 +519,6 @@ function isSolved(grid) {
 
 const boardEl = document.getElementById("board");
 const statusEl = document.getElementById("status");
-const listEl = document.getElementById("python-list");
 const cells = [];
 
 let puzzle = emptyGrid();     // the clues, they never change
@@ -741,59 +803,26 @@ function clearMyDigits() {
   setStatus("Your digits are cleared, only the original clues are left.");
 }
 
-function showPythonPuzzles() {
-  const items = window.PYTHON_PUZZLES;
+/* ------------------------------------------------------------- start here */
 
-  if (!items || items.length === 0) {
-    listEl.innerHTML = "<p class='help'>No data found. Run <code>python export_to_js.py</code> " +
-      "in this folder, then reload this page.</p>";
-    return;
-  }
+const themeBtn = document.getElementById("theme-toggle");
+const THEME_KEY = "sudoku-theme";
 
-  items.forEach(function (item, index) {
-    const box = document.createElement("div");
-    box.className = "python-item";
-
-    const title = document.createElement("h3");
-    title.textContent = (index + 1) + ". " + item.name;
-    box.appendChild(title);
-
-    const meta = document.createElement("p");
-    meta.className = "meta";
-    const bits = [item.clues + " clues", "answer count " + item.answers];
-    if (item.solve_ms !== null && item.solve_ms !== undefined) {
-      bits.push("Python solved it in " + item.solve_ms + " ms");
-    }
-    if (item.generate_ms !== undefined) {
-      bits.push("Python made it in " + item.generate_ms + " ms");
-    }
-    bits.push(item.source);
-    meta.textContent = bits.join(" | ");
-    box.appendChild(meta);
-
-    const code = document.createElement("code");
-    code.className = "text";
-    code.textContent = item.puzzle;
-    box.appendChild(code);
-
-    const button = document.createElement("button");
-    button.textContent = "Load this puzzle in the browser";
-    button.addEventListener("click", function () {
-      const answer = loadPuzzleText(item.puzzle, "a puzzle from puzzles.js");
-
-      if (item.solution && answer) {
-        const same = gridToText(answer) === item.solution;
-        setStatus("Loaded from puzzles.js. The browser answer matches the Python answer: " +
-          (same ? "yes" : "NO") + ".", same ? "good" : "bad");
-      }
-    });
-    box.appendChild(button);
-
-    listEl.appendChild(box);
-  });
+function setTheme(light) {
+  document.body.classList.toggle("light", light);
+  themeBtn.textContent = light ? "🌙 Dark mode" : "☀ Light mode";
+  themeBtn.setAttribute("aria-pressed", light ? "true" : "false");
+  themeBtn.setAttribute("title", light ? "Switch to dark mode" : "Switch to light mode");
+  try { localStorage.setItem(THEME_KEY, light ? "light" : "dark"); } catch (e) {}
 }
 
-/* ------------------------------------------------------------- start here */
+let savedTheme = null;
+try { savedTheme = localStorage.getItem(THEME_KEY); } catch (e) {}
+setTheme(savedTheme === "light");
+
+themeBtn.addEventListener("click", function () {
+  setTheme(!document.body.classList.contains("light"));
+});
 
 buildBoard();
 buildKeypad();
@@ -839,7 +868,6 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-showPythonPuzzles();
 newPuzzle(Number(document.getElementById("clues").value));
 </script>
 </body>

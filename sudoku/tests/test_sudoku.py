@@ -2,13 +2,19 @@
 test_sudoku.py - small self-check for sudoku.py
 
 Run it with:
-    python test_sudoku.py
+    python tests/test_sudoku.py
 
 It prints PASS for every check and stops at the first failure.
 No test framework is needed, just plain asserts and if statements.
 """
 
+import os
+import sys
 import time
+
+# sudoku.py lives in ../src, so put that folder on the import path.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                "..", "src"))
 
 import sudoku
 
