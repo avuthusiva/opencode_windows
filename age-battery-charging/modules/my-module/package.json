@@ -1,0 +1,12 @@
+{
+  "name": "my-module",
+  "version": "0.1.0",
+  "main": "index.ts",
+  "files": [
+    "index.ts",
+    "src",
+    "android",
+    "expo-module.config.json"
+  ],
+  "license": "MIT"
+}

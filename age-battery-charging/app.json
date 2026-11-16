@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "AGE Battery Charging",
+    "slug": "age-battery-charging",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "agebatterycharging",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.asvr410.agebatterycharging",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "009b50d2-9d8f-4a99-8c7c-43bee77c0b95"
+      }
+    },
+    "owner": "asvr410"
+  }
+}

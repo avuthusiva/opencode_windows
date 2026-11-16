@@ -1,0 +1,8 @@
+{
+  "platforms": ["android"],
+  "modules": {
+    "BatteryDetails": {
+      "android": ["expo.modules.mymodule.BatteryDetailsModule"]
+    }
+  }
+}
