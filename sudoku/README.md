@@ -74,6 +74,26 @@ without making duplicates.
 Double click `web\sudoku.html`, or right click it and open it with Chrome. That is
 all, the page needs no server and no internet.
 
+### Open it online, without downloading anything
+
+GitHub shows HTML files as source code, so use this preview link instead:
+
+```
+https://htmlpreview.github.io/?https://github.com/avuthusiva/opencode_windows/blob/main/sudoku/web/sudoku.html
+```
+
+That service fetches the public file and runs it in the browser. It is a third
+party site, so use it only for this learning page, never for private work.
+
+Two other ways, if that link ever stops working:
+
+* `https://raw.githack.com/avuthusiva/opencode_windows/main/sudoku/web/sudoku.html`
+* turn on GitHub Pages (Settings -> Pages, branch `main`, folder `/ (root)`), then
+  open `https://avuthusiva.github.io/opencode_windows/sudoku/web/sudoku.html`
+
+A `raw.githubusercontent.com` link will not work. It sends the file as plain
+text, so the browser prints the code instead of the page.
+
 On the page you can:
 
 * pick a clue count and press **New puzzle** (the page makes it itself, in
