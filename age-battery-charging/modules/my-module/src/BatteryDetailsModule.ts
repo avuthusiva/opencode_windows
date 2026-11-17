@@ -6,6 +6,7 @@ export type BatteryDetails = {
   capacityMah: number;
   designCapacityMah: number;
   chargeCounterMah: number;
+  chargeTimeRemainingMs: number;
   temperatureC: number;
   health: string;
   plugged: string;

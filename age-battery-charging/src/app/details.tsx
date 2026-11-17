@@ -9,6 +9,7 @@ import {
   batteryPercent,
   capacityLabel,
   currentLabel,
+  durationLabel,
   stateLabel,
   timeLabel,
   timeToFull,
@@ -66,7 +67,11 @@ export default function DetailsScreen() {
         <Text style={styles.cardTitle}>Charging details</Text>
         <InfoRow
           label="Time to full"
-          value={timeToFull(details, info.level, charging)}
+          value={
+            details.chargeTimeRemainingMs > 0
+              ? durationLabel(details.chargeTimeRemainingMs)
+              : timeToFull(details, info.level, charging)
+          }
           valueColor={charging ? colors.primary : colors.muted}
         />
         <InfoRow label="Battery health" value={details.health} />
@@ -79,7 +84,8 @@ export default function DetailsScreen() {
         } />
         <InfoRow label="Power source" value={details.plugged} />
         <Text style={styles.noteInline}>
-          Time to full is an estimate from capacity and charging current.
+          Time to full uses the Android estimate when available, otherwise it is
+          estimated from capacity and charging current.
         </Text>
       </View>
 

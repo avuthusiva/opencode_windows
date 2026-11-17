@@ -73,6 +73,15 @@ export function timeToFull(
   return hours > 0 ? `${hours} h ${mins} min` : `${mins} min`;
 }
 
+export function durationLabel(milliseconds: number): string {
+  if (milliseconds <= 0) return 'Unavailable';
+  const minutes = Math.round(milliseconds / 60000);
+  if (minutes < 1) return 'Less than 1 min';
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours} h ${mins} min` : `${mins} min`;
+}
+
 export function voltageLabel(voltageMv: number): string {
   return voltageMv > 0 ? `${(voltageMv / 1000).toFixed(2)} V` : 'Unavailable';
 }

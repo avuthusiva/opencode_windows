@@ -54,16 +54,18 @@ class BatteryDetailsModule : Module() {
 
         var currentMa = -1.0
         var chargeCounterMah = -1.0
+        var chargeTimeRemainingMs = -1L
         if (manager != null) {
           try {
-            val microAmps = manager.getProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+            val microAmps = manager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
             if (microAmps != Long.MIN_VALUE && microAmps != 0L) {
               currentMa = abs(microAmps.toDouble()) / 1000.0
             }
-            val microAh = manager.getProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+            val microAh = manager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
             if (microAh > 0) {
               chargeCounterMah = microAh / 1000.0
             }
+            chargeTimeRemainingMs = manager.computeChargeTimeRemaining()
           } catch (e: Exception) {
             // Some devices do not implement these properties.
           }
@@ -87,6 +89,7 @@ class BatteryDetailsModule : Module() {
           "capacityMah" to capacityMah,
           "designCapacityMah" to designCapacityMah,
           "chargeCounterMah" to chargeCounterMah,
+          "chargeTimeRemainingMs" to chargeTimeRemainingMs.toDouble(),
           "temperatureC" to temperatureC,
           "health" to health,
           "plugged" to plugged,
@@ -110,6 +113,7 @@ class BatteryDetailsModule : Module() {
     "capacityMah" to -1.0,
     "designCapacityMah" to -1.0,
     "chargeCounterMah" to -1.0,
+    "chargeTimeRemainingMs" to -1.0,
     "temperatureC" to -1.0,
     "health" to "UNKNOWN",
     "plugged" to "UNPLUGGED",

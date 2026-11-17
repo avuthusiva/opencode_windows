@@ -9,6 +9,7 @@ const EMPTY: Details = {
   capacityMah: -1,
   designCapacityMah: -1,
   chargeCounterMah: -1,
+  chargeTimeRemainingMs: -1,
   temperatureC: -1,
   health: 'UNKNOWN',
   plugged: 'UNPLUGGED',
